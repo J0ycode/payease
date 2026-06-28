@@ -2,6 +2,10 @@
 
 > Node.js + Express + MongoDB backend for the Payment Collection App.
 
+### 🔗 Project Links
+- **🚀 Live App (Vercel)**: [https://payease-dthv.vercel.app/](https://payease-dthv.vercel.app/)
+- **💻 GitHub Repository**: [https://github.com/J0ycode/payease.git](https://github.com/J0ycode/payease.git)
+
 ## Stack
 - **Node.js** + **Express.js** — REST API
 - **MongoDB** + **Mongoose** — Database & ODM

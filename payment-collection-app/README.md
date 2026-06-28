@@ -2,6 +2,10 @@
 
 > React Native (Expo) mobile app for EMI payment collection.
 
+### 🔗 Project Links
+- **🚀 Live App (Vercel)**: [https://payease-dthv.vercel.app/](https://payease-dthv.vercel.app/)
+- **💻 GitHub Repository**: [https://github.com/J0ycode/payease.git](https://github.com/J0ycode/payease.git)
+
 ## Stack
 - **React Native** + **Expo** SDK 51
 - **React Navigation** — Native Stack
