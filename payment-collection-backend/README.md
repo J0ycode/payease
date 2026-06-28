@@ -48,7 +48,7 @@ cp .env.example .env
 ### Environment Variables (`.env`)
 
 ```env
-PORT=5000
+PORT=5001
 MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/payment_db
 NODE_ENV=development
 ```
@@ -64,7 +64,7 @@ npm run seed
 
 ```bash
 npm run dev
-# Server running on http://localhost:5000
+# Server running on http://localhost:5001
 ```
 
 ---
@@ -95,8 +95,8 @@ pm2 start server.js --name payment-backend
 pm2 save
 pm2 startup
 
-# 7. Open port 5000 in EC2 Security Group (inbound rule):
-#    Custom TCP | Port 5000 | Source 0.0.0.0/0
+# 7. Open port 5001 in EC2 Security Group (inbound rule):
+#    Custom TCP | Port 5001 | Source 0.0.0.0/0
 ```
 
 ### CI/CD (GitHub Actions)
