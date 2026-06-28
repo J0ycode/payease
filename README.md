@@ -11,6 +11,12 @@ PayEase is a complete end-to-end Payment Collection Mobile Web Application that 
 
 ---
 
+## 💡 Developer's Note
+
+For the database layer, **MongoDB + Mongoose** has been chosen for implementation due to limited exposure to PostgreSQL. However, I have intermediate-level knowledge of **MySQL** and SQL database architecture.
+
+---
+
 ## 🛠️ Stack & Architecture
 
 This workspace contains two distinct modules:
