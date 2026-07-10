@@ -7,7 +7,31 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Response interceptor — normalize error messages from the server
+// ── Token store ───────────────────────────────────────────────────────────────
+// In-memory store for the session JWT.
+// ⚠️  For production persistence across app restarts, replace this with
+//     expo-secure-store or @react-native-async-storage/async-storage.
+let _authToken = null;
+
+export const setAuthToken = (token) => {
+  _authToken = token;
+};
+
+export const clearAuthToken = () => {
+  _authToken = null;
+};
+
+// ── Request interceptor ───────────────────────────────────────────────────────
+// Attaches the Bearer token to every outgoing request when one is available.
+api.interceptors.request.use((config) => {
+  if (_authToken) {
+    config.headers.Authorization = `Bearer ${_authToken}`;
+  }
+  return config;
+});
+
+// ── Response interceptor ──────────────────────────────────────────────────────
+// Normalize server error messages so callers only need to handle Error objects.
 api.interceptors.response.use(
   (response) => response,
   (error) => {

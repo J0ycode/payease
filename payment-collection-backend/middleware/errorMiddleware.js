@@ -1,11 +1,13 @@
+const isProduction = () => process.env.NODE_ENV === 'production';
+
 /**
  * Global Express error handler — must be registered LAST after all routes.
+ * Issue #8: Never exposes stack traces or raw error messages to the client in production.
  */
 const errorHandler = (err, req, res, next) => {
+  // Always log server-side; stack only in development
   console.error(`[ERROR] ${req.method} ${req.path}:`, err.message);
-  if (process.env.NODE_ENV === 'development') {
-    console.error(err.stack);
-  }
+  if (!isProduction()) console.error(err.stack);
 
   // Mongoose CastError — invalid ObjectId format
   if (err.name === 'CastError') {
@@ -36,18 +38,20 @@ const errorHandler = (err, req, res, next) => {
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
   res.status(statusCode).json({
     success: false,
-    message: err.message || 'Internal Server Error',
-    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+    // Issue #8: In production, never surface internal error details to the client.
+    message: isProduction() ? 'An internal server error occurred' : err.message,
   });
 };
 
 /**
  * 404 handler — catches any unmatched routes.
+ * Issue #10: Set status on res (not on the error object) so errorHandler reads it correctly.
+ *            Previously set error.statusCode = 404, which errorHandler never read,
+ *            causing all 404s to be returned as 500.
  */
 const notFound = (req, res, next) => {
-  const error = new Error(`Route not found: ${req.method} ${req.originalUrl}`);
-  error.statusCode = 404;
-  next(error);
+  res.status(404); // ← correct: set on res, not on the error object
+  next(new Error(`Route not found: ${req.method} ${req.originalUrl}`));
 };
 
 module.exports = { errorHandler, notFound };

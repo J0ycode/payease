@@ -2,9 +2,24 @@
  * Seed script — populates the database with sample loan customers for testing.
  * Run with: node seed/seedData.js
  *
+ * Issue #12: Guards added —
+ *   1. Refuses to run when NODE_ENV=production (prevents wiping a live DB by accident).
+ *   2. Requires the user to type "YES" interactively before deleteMany() executes.
+ *
  * WARNING: This deletes all existing Customer documents before inserting.
  */
 require('dotenv').config();
+
+// Guard #1 — hard stop in production
+if (process.env.NODE_ENV === 'production') {
+  console.error(
+    '❌  Refusing to run the seed script in production.\n' +
+    '    Set NODE_ENV=development in your local .env and try again.'
+  );
+  process.exit(1);
+}
+
+const readline = require('readline');
 const mongoose = require('mongoose');
 const Customer = require('../models/Customer');
 
@@ -62,4 +77,17 @@ const seed = async () => {
   }
 };
 
-seed();
+// Guard #2 — interactive confirmation before destructive operation
+const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+rl.question(
+  '⚠️  This will DELETE all existing Customer documents and re-seed.\n' +
+  '    Type YES to continue, anything else to abort: ',
+  (answer) => {
+    rl.close();
+    if (answer.trim() !== 'YES') {
+      console.log('Aborted — no changes made.');
+      process.exit(0);
+    }
+    seed();
+  }
+);

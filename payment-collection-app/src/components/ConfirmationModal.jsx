@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Modal,
-  Animated,
+  // Issue #15: Animated was imported but never used — removed to keep the bundle clean.
 } from 'react-native';
 import { formatCurrency } from '../utils/formatters';
 

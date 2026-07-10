@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { randomBytes } = require('crypto');
 
 const paymentSchema = new mongoose.Schema(
   {
@@ -20,17 +21,20 @@ const paymentSchema = new mongoose.Schema(
     paymentAmount: {
       type: Number,
       required: true,
-      min: 1,
+      min: 0.01, // ₹0.01 minimum
     },
     status: {
       type: String,
       enum: ['success', 'failed', 'pending'],
       default: 'success',
     },
+    // Issue #6: replaced Date.now() + Math.random()*1000 (1-in-1000 collision risk at 1ms)
+    //           with 8 bytes (2^64 values) of cryptographically random hex — collision-proof.
     transactionId: {
       type: String,
       unique: true,
-      default: () => `TXN${Date.now()}${Math.floor(Math.random() * 1000)}`,
+      default: () =>
+        `TXN${Date.now()}${randomBytes(8).toString('hex').toUpperCase()}`,
     },
   },
   { timestamps: true }

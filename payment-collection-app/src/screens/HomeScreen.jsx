@@ -13,7 +13,7 @@ import {
   StatusBar,
   ScrollView,
 } from 'react-native';
-import api from '../api';
+import api, { setAuthToken, clearAuthToken } from '../api';
 
 const COLORS = {
   bg: '#F0F4FF',
@@ -31,7 +31,8 @@ export default function HomeScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
-    const trimmed = accountNumber.trim();
+    // Normalise to uppercase to match server-side regex validator (ACC001 etc.)
+    const trimmed = accountNumber.trim().toUpperCase();
     if (!trimmed) {
       if (Platform.OS === 'web') alert('Required: Please enter your account number');
       else Alert.alert('Required', 'Please enter your account number');
@@ -39,9 +40,15 @@ export default function HomeScreen({ navigation }) {
     }
     setLoading(true);
     try {
+      // Step 1 — authenticate: POST /api/auth/login → receive JWT scoped to this account
+      const { data: authData } = await api.post('/auth/login', { accountNumber: trimmed });
+      setAuthToken(authData.token);
+
+      // Step 2 — fetch full customer details (Bearer token is now attached by interceptor)
       const { data } = await api.get(`/customers/${trimmed}`);
       navigation.navigate('LoanDetail', { customer: data.data });
     } catch (error) {
+      clearAuthToken(); // Ensure no stale token is left on failure
       if (Platform.OS === 'web') alert(`Account Not Found: ${error.message}`);
       else Alert.alert('Account Not Found', error.message);
     } finally {

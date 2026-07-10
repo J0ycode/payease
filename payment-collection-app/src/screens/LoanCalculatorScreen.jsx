@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+// Issue #13: SafeAreaView from core is deprecated; react-native-safe-area-context
+// handles Android notches and dynamic islands correctly, matching all other screens.
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { formatCurrency } from '../utils/formatters';
 
 const COLORS = {
